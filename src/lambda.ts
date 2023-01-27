@@ -7,6 +7,7 @@ import { Express } from 'express';
 import { Server } from 'http';
 import { Context } from 'aws-lambda';
 import { createServer, proxy, Response } from 'aws-serverless-express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 let cachedServer: Server;
 
@@ -16,10 +17,20 @@ async function createExpressApp(
   return await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
 }
 
+function setupSwagger(app: INestApplication) {
+  const options = new DocumentBuilder()
+    .setTitle('Blog')
+    .setDescription('Blog API')
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
+}
+
 async function bootstrap(): Promise<Server> {
   const expressApp = express();
   const app = await createExpressApp(expressApp);
   await app.init();
+  setupSwagger(app);
   return createServer(expressApp);
 }
 

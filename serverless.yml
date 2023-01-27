@@ -19,7 +19,7 @@ provider:
 
 functions:
   index:
-    handler: dist/src/index.handler
+    handler: dist/src/lambda.handler
     events:
     - http:
         cors: true

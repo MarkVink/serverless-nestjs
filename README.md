@@ -5,7 +5,7 @@ Sample publish. https://mmjdx4zxmc.execute-api.ap-northeast-1.amazonaws.com/dev/
 ## What is changed.
 
 ### add
-- `src/index.ts`
+- `src/lambda.ts`
 - `src/swagger.ts`
 - `serverless.yml`
 
