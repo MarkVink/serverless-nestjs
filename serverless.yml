@@ -3,7 +3,7 @@ service: serverless-nestjs
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
-
+  - serverless-plugin-warmup
 provider:
   name: aws
   runtime: nodejs18.x
@@ -21,6 +21,12 @@ functions:
         cors: true
         path: '{proxy+}'
         method: any
+
+custom:
+  # Enable warmup on all functions (only for production and staging)
+  warmup:
+    - production
+    - staging
 
 # only include the Prisma binary required on AWS Lambda while packaging
 package:
