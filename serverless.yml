@@ -4,10 +4,18 @@ plugins:
   - serverless-offline
   - serverless-dotenv-plugin
   - serverless-plugin-warmup
+  - serverless-prune-plugin
+  - serverless-api-gateway-caching
 provider:
   name: aws
   runtime: nodejs18.x
   region: us-east-1
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${opt:stage, 'dev'}-*
 
 functions:
   index:
@@ -15,18 +23,31 @@ functions:
     events:
     - http:
         cors: true
-        path: '/'
-        method: any
+        path: '/articles/{id}'
+        method: get
+        caching:
+          enabled: true
     - http:
         cors: true
         path: '{proxy+}'
         method: any
+        caching:
+          enabled: false
 
 custom:
-  # Enable warmup on all functions (only for production and staging)
   warmup:
-    - production
-    - staging
+    default:
+      enabled: true
+      role: IamRoleLambdaExecution
+      events:
+        - schedule: rate(5 minutes)
+      prewarm: true
+      concurrency: 1
+  prune:
+    automatic: true
+    number: 5
+  apiGatewayCaching:
+    enabled: true
 
 # only include the Prisma binary required on AWS Lambda while packaging
 package:
