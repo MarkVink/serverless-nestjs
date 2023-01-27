@@ -9,18 +9,9 @@ provider:
   runtime: nodejs18.x
   region: us-east-1
 
-package:
-  exclude:
-    - .git/**
-    - src/**
-    - test/**
-    - e2e/**
-    - nodemon.json
-    - README.md
-
 functions:
   index:
-    handler: dist/index.handler
+    handler: dist/src/index.handler
     events:
     - http:
         cors: true
@@ -30,3 +21,11 @@ functions:
         cors: true
         path: '{proxy+}'
         method: any
+
+# only include the Prisma binary required on AWS Lambda while packaging
+package:
+  patterns:
+    - '!node_modules/.prisma/client/libquery_engine-*'
+    - 'node_modules/.prisma/client/libquery_engine-rhel-*'
+    - '!node_modules/prisma/libquery_engine-*'
+    - '!node_modules/@prisma/engines/**'
