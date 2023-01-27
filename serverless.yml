@@ -2,7 +2,7 @@ service: serverless-nestjs
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs18.x
   region: us-east-1
 
 plugins:
